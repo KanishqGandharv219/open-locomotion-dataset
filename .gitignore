@@ -37,6 +37,9 @@ Thumbs.db
 .coverage
 htmlcov/
 
+# Jupyter
+.ipynb_checkpoints/
+
 # Design Docs
 robot-locomotion-dataset-proposal.md
 

@@ -3,8 +3,11 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![CI](https://github.com/KanishqGandharv219/open-locomotion-dataset/actions/workflows/ci.yml/badge.svg)](https://github.com/KanishqGandharv219/open-locomotion-dataset/actions)
+[![Website](https://img.shields.io/badge/Website-Live-8b7cf6)](https://kanishqgandharv219.github.io/open-locomotion-dataset/)
 
 **A unified, open-source benchmark for legged robot locomotion across diverse morphologies and terrains.**
+
+> **[View the interactive benchmark dashboard](https://kanishqgandharv219.github.io/open-locomotion-dataset/)**
 
 OLSD aims to become the **ImageNet of robot locomotion** -- a foundational shared resource that accelerates research, enables cross-lab comparisons, and democratizes access to high-quality training data for legged robots.
 
@@ -53,9 +56,10 @@ pip install -e .
 
 With optional dependencies:
 ```bash
-pip install -e ".[all]"     # Everything (ROS bags, dev tools)
+pip install -e ".[sim]"     # MuJoCo, PyTorch, Gymnasium, Stable-Baselines3
 pip install -e ".[dev]"     # Development (pytest, ruff)
 pip install -e ".[rosbag]"  # ROS bag support
+pip install -e ".[all]"     # Everything
 ```
 
 ## Quick Start
