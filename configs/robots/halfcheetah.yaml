@@ -1,0 +1,24 @@
+# MuJoCo HalfCheetah (Gymnasium / D4RL)
+robot_id: halfcheetah
+robot_name: HalfCheetah
+morphology: other
+n_joints: 9
+n_actuators: 6
+mass_kg: 14.0
+n_legs: 2
+dof_per_leg: 3
+standing_height_m: 0.15
+body_length_m: 1.0
+manufacturer: null
+description: >
+  Classic MuJoCo continuous-control benchmark. 2D planar runner with
+  back and front legs. Standard D4RL / Gymnasium environment.
+mjcf_path: gymnasium/envs/mujoco/assets/half_cheetah.xml
+urdf_path: null
+joints:
+  - { name: bthigh, lower_limit: -0.52, upper_limit: 1.05, max_torque: 120.0, max_velocity: 20.0 }
+  - { name: bshin, lower_limit: -0.785, upper_limit: 0.785, max_torque: 90.0, max_velocity: 20.0 }
+  - { name: bfoot, lower_limit: -0.40, upper_limit: 0.785, max_torque: 60.0, max_velocity: 20.0 }
+  - { name: fthigh, lower_limit: -1.00, upper_limit: 0.70, max_torque: 120.0, max_velocity: 20.0 }
+  - { name: fshin, lower_limit: -1.20, upper_limit: 0.87, max_torque: 60.0, max_velocity: 20.0 }
+  - { name: ffoot, lower_limit: -0.50, upper_limit: 0.50, max_torque: 30.0, max_velocity: 20.0 }

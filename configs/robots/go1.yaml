@@ -1,0 +1,30 @@
+# Unitree Go1
+robot_id: unitree_go1
+robot_name: Unitree Go1
+morphology: quadruped
+n_joints: 12
+n_actuators: 12
+mass_kg: 12.0
+n_legs: 4
+dof_per_leg: 3
+standing_height_m: 0.34
+body_length_m: 0.366
+manufacturer: Unitree Robotics
+description: >
+  Compact quadruped robot with 3-DoF legs (hip abduction, hip flexion,
+  knee flexion). Widely used in RL locomotion research.
+mjcf_path: null  # Will be set to MuJoCo Menagerie path
+urdf_path: null
+joints:
+  - { name: FR_hip, lower_limit: -0.863, upper_limit: 0.863, max_torque: 23.7, max_velocity: 30.1 }
+  - { name: FR_thigh, lower_limit: -0.686, upper_limit: 4.501, max_torque: 23.7, max_velocity: 30.1 }
+  - { name: FR_calf, lower_limit: -2.818, upper_limit: -0.888, max_torque: 35.55, max_velocity: 20.06 }
+  - { name: FL_hip, lower_limit: -0.863, upper_limit: 0.863, max_torque: 23.7, max_velocity: 30.1 }
+  - { name: FL_thigh, lower_limit: -0.686, upper_limit: 4.501, max_torque: 23.7, max_velocity: 30.1 }
+  - { name: FL_calf, lower_limit: -2.818, upper_limit: -0.888, max_torque: 35.55, max_velocity: 20.06 }
+  - { name: RR_hip, lower_limit: -0.863, upper_limit: 0.863, max_torque: 23.7, max_velocity: 30.1 }
+  - { name: RR_thigh, lower_limit: -0.686, upper_limit: 4.501, max_torque: 23.7, max_velocity: 30.1 }
+  - { name: RR_calf, lower_limit: -2.818, upper_limit: -0.888, max_torque: 35.55, max_velocity: 20.06 }
+  - { name: RL_hip, lower_limit: -0.863, upper_limit: 0.863, max_torque: 23.7, max_velocity: 30.1 }
+  - { name: RL_thigh, lower_limit: -0.686, upper_limit: 4.501, max_torque: 23.7, max_velocity: 30.1 }
+  - { name: RL_calf, lower_limit: -2.818, upper_limit: -0.888, max_torque: 35.55, max_velocity: 20.06 }

@@ -1,0 +1,92 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "olsd"
+version = "0.1.0"
+description = "Open Locomotion Skills Dataset — A unified benchmark for legged robot locomotion"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Kanishq Gandharv" },
+]
+keywords = ["robotics", "locomotion", "dataset", "benchmark", "reinforcement-learning"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    # Core
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "pyarrow>=14.0",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "h5py>=3.8",
+
+    # Simulation
+    "mujoco>=3.0",
+    "dm_control>=1.0",
+
+    # ML / RL
+    "torch>=2.0",
+    "gymnasium[mujoco]>=0.29",
+    "stable-baselines3>=2.0",
+
+    # Data / HF
+    "datasets>=2.14",
+    "huggingface-hub>=0.17",
+
+    # Visualization
+    "matplotlib>=3.7",
+    "scipy>=1.10",
+
+    # CLI
+    "click>=8.1",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+isaac = [
+    # Isaac Gym must be installed manually from NVIDIA's site
+    # legged_gym and rsl_rl installed from their repos
+]
+rosbag = [
+    "rosbags>=0.9",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1",
+]
+all = [
+    "olsd[rosbag,dev]",
+]
+
+[project.scripts]
+olsd = "olsd.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/open-locomotion-skills/olsd"
+Repository = "https://github.com/open-locomotion-skills/olsd"
+Documentation = "https://github.com/open-locomotion-skills/olsd#readme"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"

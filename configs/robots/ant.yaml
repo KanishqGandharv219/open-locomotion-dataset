@@ -1,0 +1,26 @@
+# MuJoCo Ant (Gymnasium / D4RL)
+robot_id: ant
+robot_name: Ant
+morphology: quadruped
+n_joints: 13
+n_actuators: 8
+mass_kg: 13.5
+n_legs: 4
+dof_per_leg: 2
+standing_height_m: 0.75
+body_length_m: 0.6
+manufacturer: null
+description: >
+  MuJoCo 3D quadruped with spherical torso and 4 legs, each with
+  2 hinge joints. Standard D4RL / Gymnasium locomotion benchmark.
+mjcf_path: gymnasium/envs/mujoco/assets/ant.xml
+urdf_path: null
+joints:
+  - { name: hip_1, lower_limit: -0.70, upper_limit: 0.70, max_torque: 150.0, max_velocity: 20.0 }
+  - { name: ankle_1, lower_limit: 0.50, upper_limit: 1.20, max_torque: 150.0, max_velocity: 20.0 }
+  - { name: hip_2, lower_limit: -0.70, upper_limit: 0.70, max_torque: 150.0, max_velocity: 20.0 }
+  - { name: ankle_2, lower_limit: 0.50, upper_limit: 1.20, max_torque: 150.0, max_velocity: 20.0 }
+  - { name: hip_3, lower_limit: -0.70, upper_limit: 0.70, max_torque: 150.0, max_velocity: 20.0 }
+  - { name: ankle_3, lower_limit: 0.50, upper_limit: 1.20, max_torque: 150.0, max_velocity: 20.0 }
+  - { name: hip_4, lower_limit: -0.70, upper_limit: 0.70, max_torque: 150.0, max_velocity: 20.0 }
+  - { name: ankle_4, lower_limit: 0.50, upper_limit: 1.20, max_torque: 150.0, max_velocity: 20.0 }

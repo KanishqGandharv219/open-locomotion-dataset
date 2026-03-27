@@ -1,0 +1,24 @@
+# MuJoCo Walker2d (Gymnasium / D4RL)
+robot_id: walker2d
+robot_name: Walker2d
+morphology: biped
+n_joints: 9
+n_actuators: 6
+mass_kg: 11.0
+n_legs: 2
+dof_per_leg: 3
+standing_height_m: 1.25
+body_length_m: 0.4
+manufacturer: null
+description: >
+  MuJoCo 2D planar biped. Simple humanoid-like walker with thigh,
+  leg, and foot joints on each side. Standard D4RL benchmark.
+mjcf_path: gymnasium/envs/mujoco/assets/walker2d.xml
+urdf_path: null
+joints:
+  - { name: thigh_joint, lower_limit: -1.0, upper_limit: 0.7, max_torque: 100.0, max_velocity: 20.0 }
+  - { name: leg_joint, lower_limit: -1.0, upper_limit: 0.7, max_torque: 100.0, max_velocity: 20.0 }
+  - { name: foot_joint, lower_limit: -1.0, upper_limit: 0.7, max_torque: 100.0, max_velocity: 20.0 }
+  - { name: thigh_left_joint, lower_limit: -1.0, upper_limit: 0.7, max_torque: 100.0, max_velocity: 20.0 }
+  - { name: leg_left_joint, lower_limit: -1.0, upper_limit: 0.7, max_torque: 100.0, max_velocity: 20.0 }
+  - { name: foot_left_joint, lower_limit: -1.0, upper_limit: 0.7, max_torque: 100.0, max_velocity: 20.0 }

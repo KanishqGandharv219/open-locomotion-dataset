@@ -19,10 +19,14 @@ env/
 *.swo
 
 # Data (large files)
-data/generated/
-data/sample/
+data/
 *.hdf5
 *.parquet
+
+# Checkpoints and logs
+checkpoints/
+results/
+tb_logs/
 
 # OS
 .DS_Store
@@ -35,3 +39,6 @@ htmlcov/
 
 # Design Docs
 robot-locomotion-dataset-proposal.md
+
+# Gemini
+.gemini/

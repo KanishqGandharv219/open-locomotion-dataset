@@ -1,0 +1,21 @@
+# MuJoCo Hopper (Gymnasium / D4RL)
+robot_id: hopper
+robot_name: Hopper
+morphology: biped
+n_joints: 5
+n_actuators: 3
+mass_kg: 5.0
+n_legs: 1
+dof_per_leg: 3
+standing_height_m: 1.25
+body_length_m: 0.2
+manufacturer: null
+description: >
+  MuJoCo 2D single-legged hopper. Simple benchmark for learning
+  balance and forward locomotion via hopping. Standard D4RL env.
+mjcf_path: gymnasium/envs/mujoco/assets/hopper.xml
+urdf_path: null
+joints:
+  - { name: thigh_joint, lower_limit: -2.61, upper_limit: 0.0, max_torque: 100.0, max_velocity: 20.0 }
+  - { name: leg_joint, lower_limit: -2.61, upper_limit: 0.0, max_torque: 100.0, max_velocity: 20.0 }
+  - { name: foot_joint, lower_limit: -0.785, upper_limit: 0.785, max_torque: 100.0, max_velocity: 20.0 }
