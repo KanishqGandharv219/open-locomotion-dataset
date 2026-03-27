@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OLSD -- Open Locomotion Skills Dataset</title>
+  <meta name="description" content="A unified, open-source benchmark for legged robot locomotion across diverse morphologies and terrains.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0b0f;
+      --bg-elevated: #12141a;
+      --surface: rgba(255,255,255,0.04);
+      --surface-border: rgba(255,255,255,0.06);
+      --surface-hover: rgba(255,255,255,0.07);
+      --text-primary: #e8e8ec;
+      --text-secondary: #8b8b9e;
+      --text-tertiary: #5a5a6e;
+      --accent: #7c6aef;
+      --accent-glow: rgba(124,106,239,0.15);
+      --accent-text: #a396ff;
+      --cyan: #22d3ee;
+      --cyan-glow: rgba(34,211,238,0.12);
+      --green: #34d399;
+      --green-glow: rgba(52,211,153,0.12);
+      --amber: #fbbf24;
+      --amber-glow: rgba(251,191,36,0.12);
+      --red: #f87171;
+      --red-glow: rgba(248,113,113,0.12);
+      --rose: #fb7185;
+      --gradient-primary: linear-gradient(135deg, #7c6aef 0%, #22d3ee 100%);
+      --gradient-warm: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+      --shadow-glow: 0 0 40px rgba(124,106,239,0.08);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-xs: 6px;
+    }
+
+    html { font-size: 15px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* particle canvas */
+    #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+    /* ambient gradient blobs */
+    .ambient { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.06; pointer-events: none; z-index: 0; }
+    .ambient-1 { width: 600px; height: 600px; background: var(--accent); top: -200px; right: -100px; animation: float 20s ease-in-out infinite; }
+    .ambient-2 { width: 500px; height: 500px; background: var(--cyan); bottom: -150px; left: -100px; animation: float 25s ease-in-out infinite reverse; }
+    .ambient-3 { width: 400px; height: 400px; background: var(--rose); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: float 18s ease-in-out infinite; }
+    @keyframes float { 0%,100%{ transform: translate(0,0); } 33%{ transform: translate(30px,-20px); } 66%{ transform: translate(-20px,30px); } }
+
+    .page { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+    /* ── NAVIGATION ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      background: rgba(10,11,15,0.8);
+      border-bottom: 1px solid var(--surface-border);
+      padding: 0 2rem;
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-weight: 700; font-size: 1rem; color: var(--text-primary); text-decoration: none;
+    }
+    .nav-logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--gradient-primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 800; color: #fff;
+    }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      font-size: 0.82rem; color: var(--text-secondary); text-decoration: none;
+      font-weight: 500; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-links .btn-github {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 0.9rem; border-radius: 20px;
+      background: var(--surface); border: 1px solid var(--surface-border);
+      color: var(--text-primary); font-size: 0.8rem; font-weight: 600;
+      transition: all 0.2s;
+    }
+    .nav-links .btn-github:hover { background: var(--surface-hover); border-color: rgba(255,255,255,0.12); }
+
+    /* ── HERO ── */
+    .hero { padding: 6rem 0 4rem; text-align: center; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.35rem 1rem; border-radius: 20px;
+      background: var(--accent-glow); border: 1px solid rgba(124,106,239,0.2);
+      font-size: 0.75rem; font-weight: 600; color: var(--accent-text);
+      margin-bottom: 1.5rem; letter-spacing: 0.02em;
+    }
+    .hero-badge .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{ opacity: 1; transform: scale(1); } 50%{ opacity: 0.5; transform: scale(1.6); } }
+
+    h1 {
+      font-size: 3.8rem; font-weight: 800; letter-spacing: -0.04em;
+      line-height: 1.05; margin-bottom: 1rem;
+      background: linear-gradient(135deg, #e8e8ec 0%, #8b8b9e 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    h1 .gradient-text {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.15rem; color: var(--text-secondary); line-height: 1.7;
+      max-width: 640px; margin: 0 auto 2.5rem;
+    }
+    .hero-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.7rem 1.6rem; border-radius: 10px; font-size: 0.88rem;
+      font-weight: 600; text-decoration: none; transition: all 0.25s; cursor: pointer; border: none;
+    }
+    .btn-primary {
+      background: var(--gradient-primary); color: #fff;
+      box-shadow: 0 4px 20px rgba(124,106,239,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,106,239,0.4); }
+    .btn-secondary {
+      background: var(--surface); border: 1px solid var(--surface-border); color: var(--text-primary);
+    }
+    .btn-secondary:hover { background: var(--surface-hover); border-color: rgba(255,255,255,0.12); }
+
+    /* ── STATS ROW ── */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 4rem; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius-sm);
+      padding: 1.25rem 1.4rem; transition: all 0.25s; position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--gradient-primary); opacity: 0; transition: opacity 0.25s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-glow); }
+    .stat-card:hover::before { opacity: 1; }
+    .stat-value { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em;
+      font-family: 'JetBrains Mono', monospace; }
+    .stat-value.v-accent { color: var(--accent-text); }
+    .stat-value.v-cyan { color: var(--cyan); }
+    .stat-value.v-green { color: var(--green); }
+    .stat-value.v-amber { color: var(--amber); }
+    .stat-label { font-size: 0.72rem; color: var(--text-tertiary); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.3rem; }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 4rem; }
+    .section-header { margin-bottom: 1.5rem; }
+    .section-title {
+      font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.4rem;
+    }
+    .section-sub { font-size: 0.9rem; color: var(--text-secondary); }
+
+    /* ── BENCHMARK TABLE ── */
+    .table-wrap {
+      background: var(--bg-elevated); border: 1px solid var(--surface-border);
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow-glow);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      padding: 0.85rem 1.25rem; text-align: left;
+      font-size: 0.68rem; font-weight: 600; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      border-bottom: 1px solid var(--surface-border);
+      background: rgba(255,255,255,0.015);
+      cursor: pointer; user-select: none; white-space: nowrap;
+      transition: color 0.2s;
+    }
+    thead th:hover { color: var(--accent-text); }
+    thead th .sort-icon { margin-left: 4px; opacity: 0.3; font-size: 0.55rem; transition: opacity 0.2s; }
+    thead th:hover .sort-icon { opacity: 0.7; }
+    thead th.sorted .sort-icon { opacity: 1; color: var(--accent-text); }
+    tbody td {
+      padding: 0.85rem 1.25rem; font-size: 0.875rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      vertical-align: middle; transition: background 0.15s;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:nth-child(even) { background: rgba(255,255,255,0.01); }
+    tbody tr:hover td { background: var(--accent-glow); }
+
+    .rank { font-weight: 700; font-size: 0.8rem; color: var(--text-tertiary); }
+    .rank-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%; font-weight: 700; font-size: 0.75rem;
+    }
+    .rank-1 { background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(251,191,36,0.05)); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
+    .rank-2 { background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.08); }
+    .rank-3 { background: rgba(255,255,255,0.03); color: var(--text-tertiary); border: 1px solid rgba(255,255,255,0.05); }
+    .rank-4 { background: rgba(255,255,255,0.02); color: var(--text-tertiary); }
+
+    .robot-cell { display: flex; align-items: center; gap: 0.75rem; }
+    .robot-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .robot-icon.biped { background: var(--cyan-glow); }
+    .robot-icon.quad { background: var(--green-glow); }
+    .robot-icon.mono { background: var(--amber-glow); }
+    .robot-icon.planar { background: var(--accent-glow); }
+    .robot-name { font-weight: 600; font-size: 0.875rem; }
+    .robot-meta { font-size: 0.7rem; color: var(--text-tertiary); margin-top: 0.1rem; }
+
+    .algo-badge {
+      display: inline-flex; padding: 0.2rem 0.6rem; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .algo-ppo { background: var(--accent-glow); color: var(--accent-text); }
+    .algo-sac { background: var(--cyan-glow); color: var(--cyan); }
+
+    .score { font-weight: 700; font-size: 0.95rem; font-family: 'JetBrains Mono', monospace; }
+    .score-super { color: var(--green); }
+    .score-good { color: var(--accent-text); }
+    .score-mid { color: var(--amber); }
+
+    .score-bar-wrap {
+      margin-top: 0.3rem; height: 3px; background: rgba(255,255,255,0.04);
+      border-radius: 2px; overflow: hidden; width: 72px;
+    }
+    .score-bar { height: 100%; border-radius: 2px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+    .bar-super { background: var(--green); }
+    .bar-good { background: var(--accent); }
+    .bar-mid { background: var(--amber); }
+
+    .success-badge {
+      display: inline-flex; padding: 0.15rem 0.5rem; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .success-high { background: var(--green-glow); color: var(--green); }
+    .success-mid { background: var(--amber-glow); color: var(--amber); }
+
+    .return-val { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--text-secondary); }
+
+    /* ── ROBOT CARDS ── */
+    .robot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+    .robot-card {
+      background: var(--surface); border: 1px solid var(--surface-border);
+      border-radius: var(--radius); padding: 1.5rem;
+      transition: all 0.25s; position: relative; overflow: hidden;
+    }
+    .robot-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-glow); border-color: rgba(124,106,239,0.2); }
+    .robot-card-icon { font-size: 2.2rem; margin-bottom: 0.75rem; }
+    .robot-card-name { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.25rem; }
+    .robot-card-morph { font-size: 0.78rem; color: var(--text-tertiary); font-weight: 500; margin-bottom: 1rem; }
+    .robot-card-stats { display: flex; gap: 1.2rem; }
+    .robot-card-stat-val { font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .robot-card-stat-lbl { font-size: 0.65rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ── QUICK START ── */
+    .code-block {
+      background: var(--bg-elevated); border: 1px solid var(--surface-border);
+      border-radius: var(--radius-sm); overflow: hidden;
+    }
+    .code-header {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.7rem 1.2rem; background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--surface-border);
+    }
+    .code-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .code-dot.r { background: #f87171; } .code-dot.y { background: #fbbf24; } .code-dot.g { background: #34d399; }
+    .code-title { font-size: 0.72rem; color: var(--text-tertiary); margin-left: 0.5rem; font-weight: 500; }
+    .code-body {
+      padding: 1.2rem 1.4rem; font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem; line-height: 1.8; color: var(--text-secondary);
+      overflow-x: auto;
+    }
+    .code-body .kw { color: var(--accent-text); }
+    .code-body .fn { color: var(--cyan); }
+    .code-body .str { color: var(--green); }
+    .code-body .cmt { color: var(--text-tertiary); font-style: italic; }
+    .code-body .num { color: var(--amber); }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 4rem; padding: 2rem 0;
+      border-top: 1px solid var(--surface-border);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-left { font-size: 0.78rem; color: var(--text-tertiary); }
+    .footer-right { display: flex; gap: 1.5rem; }
+    .footer-link { font-size: 0.78rem; color: var(--text-tertiary); text-decoration: none; transition: color 0.2s; }
+    .footer-link:hover { color: var(--accent-text); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    .hero { animation: fadeUp 0.7s ease-out; }
+    .stats { animation: fadeUp 0.7s ease-out 0.1s both; }
+    .section:nth-child(1) { animation: fadeUp 0.7s ease-out 0.2s both; }
+    .section:nth-child(2) { animation: fadeUp 0.7s ease-out 0.3s both; }
+    .section:nth-child(3) { animation: fadeUp 0.7s ease-out 0.4s both; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .page { padding: 0 1rem; }
+      h1 { font-size: 2.4rem; }
+      .hero { padding: 4rem 0 2.5rem; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .nav-links a:not(.btn-github) { display: none; }
+      thead th, tbody td { padding: 0.65rem 0.7rem; font-size: 0.78rem; }
+      .score-bar-wrap { display: none; }
+      .robot-icon { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <div class="ambient ambient-1"></div>
+  <div class="ambient ambient-2"></div>
+  <div class="ambient ambient-3"></div>
+
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-brand" href="#">
+        <div class="nav-logo">OL</div>
+        OLSD
+      </a>
+      <div class="nav-links">
+        <a href="#benchmark">Benchmark</a>
+        <a href="#robots">Robots</a>
+        <a href="#quickstart">Quick Start</a>
+        <a class="btn-github" href="https://github.com/KanishqGandharv219/open-locomotion-dataset" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge"><span class="pulse"></span> v0.1 -- Benchmark Ready</div>
+      <h1>Open Locomotion<br><span class="gradient-text">Skills Dataset</span></h1>
+      <p class="hero-sub">A unified, open-source benchmark for legged robot locomotion. 4 robots, 4,200 episodes, 2.7M timesteps -- with trained RL baselines achieving superhuman performance.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#benchmark">View Benchmark</a>
+        <a class="btn btn-secondary" href="#quickstart">Quick Start</a>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value v-accent">4,200</div>
+        <div class="stat-label">Episodes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value v-cyan">2.72M</div>
+        <div class="stat-label">Timesteps</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value v-green">4</div>
+        <div class="stat-label">Robots</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value v-amber">108.4</div>
+        <div class="stat-label">Best Score</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Quality Tiers</div>
+      </div>
+    </div>
+
+    <!-- BENCHMARK TABLE -->
+    <section class="section" id="benchmark">
+      <div class="section-header">
+        <h2 class="section-title">Benchmark Leaderboard</h2>
+        <p class="section-sub">D4RL-style normalized scores. 0 = random policy, 100 = expert threshold. Scores above 100 indicate superhuman performance.</p>
+      </div>
+      <div class="table-wrap">
+        <table id="leaderboard">
+          <thead>
+            <tr>
+              <th onclick="sortTable(0)">#<span class="sort-icon">&#9650;</span></th>
+              <th onclick="sortTable(1)">Robot<span class="sort-icon">&#9650;</span></th>
+              <th onclick="sortTable(2)">Algorithm<span class="sort-icon">&#9650;</span></th>
+              <th onclick="sortTable(3)">Norm. Score<span class="sort-icon">&#9650;</span></th>
+              <th onclick="sortTable(4)">Return<span class="sort-icon">&#9650;</span></th>
+              <th onclick="sortTable(5)">Success<span class="sort-icon">&#9650;</span></th>
+              <th onclick="sortTable(6)">Ep. Length<span class="sort-icon">&#9650;</span></th>
+              <th onclick="sortTable(7)">Steps<span class="sort-icon">&#9650;</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="rank"><span class="rank-badge rank-1">1</span></td>
+              <td>
+                <div class="robot-cell">
+                  <div class="robot-icon mono">&#129516;</div>
+                  <div><div class="robot-name">Hopper</div><div class="robot-meta">Monoped -- 3 joints</div></div>
+                </div>
+              </td>
+              <td><span class="algo-badge algo-ppo">PPO</span></td>
+              <td>
+                <div class="score score-super">108.4</div>
+                <div class="score-bar-wrap"><div class="score-bar bar-super" style="width:100%"></div></div>
+              </td>
+              <td class="return-val">3,507.9</td>
+              <td><span class="success-badge success-high">100%</span></td>
+              <td class="return-val">1,000</td>
+              <td class="return-val">500K</td>
+            </tr>
+            <tr>
+              <td class="rank"><span class="rank-badge rank-2">2</span></td>
+              <td>
+                <div class="robot-cell">
+                  <div class="robot-icon biped">&#129518;</div>
+                  <div><div class="robot-name">Walker2d</div><div class="robot-meta">Biped -- 6 joints</div></div>
+                </div>
+              </td>
+              <td><span class="algo-badge algo-sac">SAC</span></td>
+              <td>
+                <div class="score score-super">107.3</div>
+                <div class="score-bar-wrap"><div class="score-bar bar-super" style="width:99%"></div></div>
+              </td>
+              <td class="return-val">4,928.5</td>
+              <td><span class="success-badge success-mid">90%</span></td>
+              <td class="return-val">919</td>
+              <td class="return-val">1M</td>
+            </tr>
+            <tr>
+              <td class="rank"><span class="rank-badge rank-3">3</span></td>
+              <td>
+                <div class="robot-cell">
+                  <div class="robot-icon quad">&#128030;</div>
+                  <div><div class="robot-name">Ant</div><div class="robot-meta">Quadruped -- 8 joints</div></div>
+                </div>
+              </td>
+              <td><span class="algo-badge algo-ppo">PPO</span></td>
+              <td>
+                <div class="score score-good">29.7</div>
+                <div class="score-bar-wrap"><div class="score-bar bar-good" style="width:27%"></div></div>
+              </td>
+              <td class="return-val">1,733.2</td>
+              <td><span class="success-badge success-mid">80%</span></td>
+              <td class="return-val">892</td>
+              <td class="return-val">2M</td>
+            </tr>
+            <tr>
+              <td class="rank"><span class="rank-badge rank-4">4</span></td>
+              <td>
+                <div class="robot-cell">
+                  <div class="robot-icon planar">&#128008;</div>
+                  <div><div class="robot-name">HalfCheetah</div><div class="robot-meta">Planar -- 6 joints</div></div>
+                </div>
+              </td>
+              <td><span class="algo-badge algo-ppo">PPO</span></td>
+              <td>
+                <div class="score score-mid">18.0</div>
+                <div class="score-bar-wrap"><div class="score-bar bar-mid" style="width:17%"></div></div>
+              </td>
+              <td class="return-val">1,955.4</td>
+              <td><span class="success-badge success-high">100%</span></td>
+              <td class="return-val">1,000</td>
+              <td class="return-val">1M</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ROBOTS -->
+    <section class="section" id="robots">
+      <div class="section-header">
+        <h2 class="section-title">Supported Robots</h2>
+        <p class="section-sub">Diverse morphologies from monopeds to quadrupeds, all simulated in MuJoCo.</p>
+      </div>
+      <div class="robot-grid">
+        <div class="robot-card">
+          <div class="robot-card-icon">&#128008;</div>
+          <div class="robot-card-name">HalfCheetah</div>
+          <div class="robot-card-morph">Planar runner -- 6 joints</div>
+          <div class="robot-card-stats">
+            <div><div class="robot-card-stat-val v-accent">1,200</div><div class="robot-card-stat-lbl">Episodes</div></div>
+            <div><div class="robot-card-stat-val">6</div><div class="robot-card-stat-lbl">DOF</div></div>
+            <div><div class="robot-card-stat-val v-green">18.0</div><div class="robot-card-stat-lbl">Best Score</div></div>
+          </div>
+        </div>
+        <div class="robot-card">
+          <div class="robot-card-icon">&#128030;</div>
+          <div class="robot-card-name">Ant</div>
+          <div class="robot-card-morph">Quadruped -- 8 joints</div>
+          <div class="robot-card-stats">
+            <div><div class="robot-card-stat-val v-accent">1,000</div><div class="robot-card-stat-lbl">Episodes</div></div>
+            <div><div class="robot-card-stat-val">8</div><div class="robot-card-stat-lbl">DOF</div></div>
+            <div><div class="robot-card-stat-val v-green">29.7</div><div class="robot-card-stat-lbl">Best Score</div></div>
+          </div>
+        </div>
+        <div class="robot-card">
+          <div class="robot-card-icon">&#129518;</div>
+          <div class="robot-card-name">Walker2d</div>
+          <div class="robot-card-morph">Biped -- 6 joints</div>
+          <div class="robot-card-stats">
+            <div><div class="robot-card-stat-val v-accent">1,000</div><div class="robot-card-stat-lbl">Episodes</div></div>
+            <div><div class="robot-card-stat-val">6</div><div class="robot-card-stat-lbl">DOF</div></div>
+            <div><div class="robot-card-stat-val v-green">107.3</div><div class="robot-card-stat-lbl">Best Score</div></div>
+          </div>
+        </div>
+        <div class="robot-card">
+          <div class="robot-card-icon">&#129516;</div>
+          <div class="robot-card-name">Hopper</div>
+          <div class="robot-card-morph">Monoped -- 3 joints</div>
+          <div class="robot-card-stats">
+            <div><div class="robot-card-stat-val v-accent">1,000</div><div class="robot-card-stat-lbl">Episodes</div></div>
+            <div><div class="robot-card-stat-val">3</div><div class="robot-card-stat-lbl">DOF</div></div>
+            <div><div class="robot-card-stat-val v-green">108.4</div><div class="robot-card-stat-lbl">Best Score</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUICK START -->
+    <section class="section" id="quickstart">
+      <div class="section-header">
+        <h2 class="section-title">Quick Start</h2>
+        <p class="section-sub">Get running in three commands.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span>
+          <span class="code-title">terminal</span>
+        </div>
+        <div class="code-body">
+<span class="cmt"># Install</span>
+pip install -e .
+
+<span class="cmt"># Generate expert trajectories</span>
+olsd generate -r halfcheetah -p checkpoints/halfcheetah/ppo/best/best_model.zip -n <span class="num">500</span>
+
+<span class="cmt"># Train a PPO baseline</span>
+olsd train -r walker2d -a sac -t <span class="num">1000000</span>
+
+<span class="cmt"># Evaluate all trained models</span>
+olsd eval --all -n <span class="num">50</span>
+        </div>
+      </div>
+
+      <div class="code-block" style="margin-top: 1rem;">
+        <div class="code-header">
+          <span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span>
+          <span class="code-title">python</span>
+        </div>
+        <div class="code-body">
+<span class="kw">import</span> olsd
+<span class="kw">from</span> olsd.generation.mujoco_gen <span class="kw">import</span> generate_trajectories
+
+<span class="cmt"># Generate trajectories</span>
+episodes = <span class="fn">generate_trajectories</span>(<span class="str">"halfcheetah"</span>, n_episodes=<span class="num">50</span>)
+
+<span class="cmt"># Load and explore</span>
+dataset = olsd.<span class="fn">load</span>(<span class="str">"./data/olsd-v0.1-final"</span>)
+<span class="fn">print</span>(dataset.<span class="fn">summary</span>())
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-left">Built by Kanishq Gandharv -- Making robot locomotion research open and reproducible.</div>
+      <div class="footer-right">
+        <a class="footer-link" href="https://github.com/KanishqGandharv219/open-locomotion-dataset" target="_blank">GitHub</a>
+        <a class="footer-link" href="notebooks/quickstart.ipynb">Notebook</a>
+        <a class="footer-link" href="CONTRIBUTING.md">Contribute</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    /* ── Particle Network Animation ── */
+    (() => {
+      const canvas = document.getElementById('particles');
+      const ctx = canvas.getContext('2d');
+      let W, H, time = 0, mouseX = -1000, mouseY = -1000, mouseOn = false;
+      const DOTS = [];
+      const CONNECT_DIST = 120;
+      const MOUSE_RADIUS = 200;
+      const DOT_COUNT_FACTOR = 0.00004;
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        initDots();
+      }
+
+      function initDots() {
+        DOTS.length = 0;
+        const count = Math.floor(W * H * DOT_COUNT_FACTOR);
+        for (let i = 0; i < count; i++) {
+          DOTS.push({
+            x: Math.random() * W, y: Math.random() * H,
+            vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+            r: Math.random() * 1.5 + 0.5,
+            baseAlpha: Math.random() * 0.3 + 0.1,
+          });
+        }
+      }
+
+      function animate() {
+        time += 0.016;
+        ctx.clearRect(0, 0, W, H);
+
+        for (const d of DOTS) {
+          d.x += d.vx; d.y += d.vy;
+          if (d.x < 0) d.x = W; if (d.x > W) d.x = 0;
+          if (d.y < 0) d.y = H; if (d.y > H) d.y = 0;
+
+          /* mouse repulsion */
+          if (mouseOn) {
+            const dx = d.x - mouseX, dy = d.y - mouseY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < MOUSE_RADIUS && dist > 0) {
+              const force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS * 0.015;
+              d.vx += (dx / dist) * force;
+              d.vy += (dy / dist) * force;
+            }
+          }
+
+          /* damping */
+          d.vx *= 0.999; d.vy *= 0.999;
+
+          /* draw dot */
+          const alpha = d.baseAlpha + Math.sin(time + d.x * 0.01) * 0.05;
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(124,106,239,${alpha})`;
+          ctx.fill();
+        }
+
+        /* draw connections */
+        for (let i = 0; i < DOTS.length; i++) {
+          for (let j = i + 1; j < DOTS.length; j++) {
+            const dx = DOTS[i].x - DOTS[j].x;
+            const dy = DOTS[i].y - DOTS[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < CONNECT_DIST) {
+              const alpha = (1 - dist / CONNECT_DIST) * 0.06;
+              ctx.beginPath();
+              ctx.moveTo(DOTS[i].x, DOTS[i].y);
+              ctx.lineTo(DOTS[j].x, DOTS[j].y);
+              ctx.strokeStyle = `rgba(124,106,239,${alpha})`;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', resize);
+      window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; mouseOn = true; });
+      window.addEventListener('mouseleave', () => mouseOn = false);
+      resize();
+      animate();
+    })();
+
+    /* ── Sortable Table ── */
+    let sortDir = {};
+    function sortTable(colIdx) {
+      const table = document.getElementById('leaderboard');
+      const tbody = table.querySelector('tbody');
+      const headers = table.querySelectorAll('thead th');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const asc = sortDir[colIdx] = !sortDir[colIdx];
+      headers.forEach((th, i) => {
+        th.classList.toggle('sorted', i === colIdx);
+        const icon = th.querySelector('.sort-icon');
+        if (icon) icon.innerHTML = (i === colIdx && asc) ? '&#9660;' : '&#9650;';
+      });
+      rows.sort((a, b) => {
+        let aV = a.cells[colIdx].textContent.trim();
+        let bV = b.cells[colIdx].textContent.trim();
+        let aN = parseFloat(aV.replace(/[%,KM]/g, '').replace(/\/.+/, ''));
+        let bN = parseFloat(bV.replace(/[%,KM]/g, '').replace(/\/.+/, ''));
+        if (aV.includes('M')) aN *= 1e6; if (aV.includes('K')) aN *= 1e3;
+        if (bV.includes('M')) bN *= 1e6; if (bV.includes('K')) bN *= 1e3;
+        if (!isNaN(aN) && !isNaN(bN)) return asc ? aN - bN : bN - aN;
+        return asc ? aV.localeCompare(bV) : bV.localeCompare(aV);
+      });
+      rows.forEach(r => tbody.appendChild(r));
+    }
+  </script>
+</body>
+</html>

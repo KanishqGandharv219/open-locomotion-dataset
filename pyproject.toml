@@ -33,15 +33,6 @@ dependencies = [
     "pyyaml>=6.0",
     "h5py>=3.8",
 
-    # Simulation
-    "mujoco>=3.0",
-    "dm_control>=1.0",
-
-    # ML / RL
-    "torch>=2.0",
-    "gymnasium[mujoco]>=0.29",
-    "stable-baselines3>=2.0",
-
     # Data / HF
     "datasets>=2.14",
     "huggingface-hub>=0.17",
@@ -56,6 +47,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+sim = [
+    "mujoco>=3.0",
+    "dm_control>=1.0",
+    "torch>=2.0",
+    "gymnasium[mujoco]>=0.29",
+    "stable-baselines3>=2.0",
+]
 isaac = [
     # Isaac Gym must be installed manually from NVIDIA's site
     # legged_gym and rsl_rl installed from their repos
@@ -66,10 +64,11 @@ rosbag = [
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
+    "pytest-timeout>=2.0",
     "ruff>=0.1",
 ]
 all = [
-    "olsd[rosbag,dev]",
+    "olsd[sim,rosbag,dev]",
 ]
 
 [project.scripts]
