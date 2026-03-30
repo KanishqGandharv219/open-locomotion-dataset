@@ -1,0 +1,17 @@
+robot_id: anymal_d
+robot_name: ANYmal D
+morphology: quadruped
+n_joints: 12
+n_actuators: 12
+mass_kg: 50.0
+n_legs: 4
+dof_per_leg: 3
+standing_height_m: 0.54
+body_length_m: 0.85
+manufacturer: ANYbotics
+mjcf_path: assets/anymal_d/anymal_d.xml
+description: >
+  Research quadruped with 3-DOF legs (HAA, HFE, KFE per leg).
+  Data source: GrandTour dataset (ETH Zurich, Robotic Systems Lab).
+  49 environments including indoor, outdoor, alpine, forest, industrial.
+  License: CC-BY-4.0.

@@ -1,5 +1,16 @@
 """OLSD Schema — public API."""
 
+from olsd.schema.alignment import (
+    compute_max_dof,
+    compute_normalization_stats,
+    create_active_mask,
+    denormalize_array,
+    load_normalization_stats,
+    normalize_array,
+    pad_array,
+    pad_batch,
+    save_normalization_stats,
+)
 from olsd.schema.metadata import (
     DatasetInfo,
     DomainRandomization,
@@ -48,5 +59,15 @@ __all__ = [
     "TerrainTraversalReward",
     "TerrainType",
     "WalkingReward",
+    "compute_max_dof",
+    "compute_normalization_stats",
+    "create_active_mask",
+    "denormalize_array",
     "get_reward",
+    "load_normalization_stats",
+    "normalize_array",
+    "pad_array",
+    "pad_batch",
+    "save_normalization_stats",
 ]
+

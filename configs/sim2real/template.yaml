@@ -1,0 +1,22 @@
+robot_id: template_robot
+identified_params:
+  global_friction: 1.0
+  mass_scale: 1.0
+  joint_damping_scale: 1.0
+  joint_armature_scale: 1.0
+  kp_scale: 1.0
+  kd_scale: 1.0
+  actuator_latency_ms: 2.0
+  observation_noise_std: 0.01
+domain_randomization:
+  friction_range: [0.85, 1.15]
+  mass_scale_range: [0.85, 1.15]
+  joint_damping_range: [0.85, 1.15]
+  joint_armature_range: [0.85, 1.15]
+  kp_range: [0.85, 1.15]
+  kd_range: [0.85, 1.15]
+  latency_range_ms: [0.0, 5.0]
+  observation_noise_std: 0.02
+template_only: false
+notes:
+  - Copy this template for new robots and replace identified_params after system ID.

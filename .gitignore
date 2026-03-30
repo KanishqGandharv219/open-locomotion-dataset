@@ -45,3 +45,6 @@ robot-locomotion-dataset-proposal.md
 
 # Gemini
 .gemini/
+
+# External cloned repos
+external_tmp/

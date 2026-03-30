@@ -1,0 +1,23 @@
+robot_id: unitree_go1
+identified_params:
+  global_friction: 1.0
+  mass_scale: 1.0
+  joint_damping_scale: 1.0
+  joint_armature_scale: 1.0
+  kp_scale: 1.0
+  kd_scale: 1.0
+  actuator_latency_ms: 2.0
+  observation_noise_std: 0.01
+domain_randomization:
+  friction_range: [0.75, 1.25]
+  mass_scale_range: [0.9, 1.1]
+  joint_damping_range: [0.8, 1.2]
+  joint_armature_range: [0.8, 1.2]
+  kp_range: [0.8, 1.2]
+  kd_range: [0.8, 1.2]
+  latency_range_ms: [0.0, 5.0]
+  observation_noise_std: 0.02
+template_only: true
+notes:
+  - Template-only config derived from the local Go1 simulation demo, not from real hardware.
+  - Use py -m olsd.sim2real.system_id with data/go1_episodes to refresh these values.

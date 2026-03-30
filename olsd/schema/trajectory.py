@@ -35,6 +35,7 @@ class Morphology(str, Enum):
     BIPED = "biped"
     HUMANOID = "humanoid"
     HEXAPOD = "hexapod"
+    WHEELED_BIPED = "wheeled_biped"
     OTHER = "other"
 
 

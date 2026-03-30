@@ -1,0 +1,37 @@
+robot_id: unitree_go1
+identified_params:
+  global_friction: 0.85615905612404
+  mass_scale: 0.9985565534953125
+  joint_damping_scale: 0.8232163711628182
+  joint_armature_scale: 0.9827413547089775
+  kp_scale: 1.0699767972513454
+  kd_scale: 1.0771881388900795
+  actuator_latency_ms: 2.110590811688995
+  observation_noise_std: 0.018598398452132518
+domain_randomization:
+  friction_range:
+  - 0.727735197705434
+  - 0.9845829145426459
+  mass_scale_range:
+  - 0.8487730704710156
+  - 1.1483400365196093
+  joint_damping_range:
+  - 0.6997339154883955
+  - 0.9466988268372409
+  joint_armature_range:
+  - 0.8353301515026309
+  - 1.1301525579153242
+  kp_range:
+  - 0.9094802776636436
+  - 1.2304733168390471
+  kd_range:
+  - 0.9156099180565676
+  - 1.2387663597235914
+  latency_range_ms:
+  - 0.0
+  - 5.110590811688995
+  observation_noise_std: 0.021388158219952394
+template_only: true
+notes:
+- Template-only config derived from simulated Go1 reference data.
+- No MJCF was supplied; backend replay fell back to a template dynamics model.

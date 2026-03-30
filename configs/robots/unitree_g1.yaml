@@ -1,0 +1,13 @@
+robot_id: unitree_g1
+robot_name: Unitree G1
+morphology: humanoid
+n_joints: 23
+n_actuators: 23
+mass_kg: 35.0
+standing_height_m: 1.27
+manufacturer: Unitree Robotics
+description: >
+  23-DOF humanoid robot.
+  DOF breakdown: 3 torso (waist pitch/roll/yaw) + 7×2 arms + 3×2 legs.
+  Data from kinematic retargeting of human motion capture (ACCAD, LAFAN1).
+  ⚠️ License: check HuggingFace before redistribution.

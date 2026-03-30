@@ -1,166 +1,302 @@
-# OLSD -- Open Locomotion Skills Dataset
+# OLSD v2
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![CI](https://github.com/KanishqGandharv219/open-locomotion-dataset/actions/workflows/ci.yml/badge.svg)](https://github.com/KanishqGandharv219/open-locomotion-dataset/actions)
 [![Website](https://img.shields.io/badge/Website-Live-8b7cf6)](https://kanishqgandharv219.github.io/open-locomotion-dataset/)
 
-**A unified, open-source benchmark for legged robot locomotion across diverse morphologies and terrains.**
+Open Locomotion Skills Dataset is a unified locomotion data and sim-to-real toolkit for legged robots. OLSD v2 adds external hardware ingestors, training-time embodiment alignment utilities, a reusable Go1 training environment, reduced-parameter system ID, domain-randomization configs, and canonical Phase 2 sim-to-real artifacts.
 
-> **[View the interactive benchmark dashboard](https://kanishqgandharv219.github.io/open-locomotion-dataset/)**
+## Verified Status
 
-OLSD aims to become the **ImageNet of robot locomotion** -- a foundational shared resource that accelerates research, enables cross-lab comparisons, and democratizes access to high-quality training data for legged robots.
+As of March 30, 2026, the repository is verified at:
 
----
+- `71` passing tests via `python -m pytest tests -q`
+- Phase 1 complete: schema upgrades, external ingestors, alignment utilities
+- Phase 2 complete: Go1 sim-to-real kit, terrain generation, ANYmal-D real-data alignment, final closeout report
+- strict Go1 head-to-head completed with an integrated `walk-these-ways` `pretrain-v0` baseline adapter
 
-## Features
+Canonical Phase 2 artifacts live under:
 
-- **Unified Schema** -- Pydantic-validated trajectory format compatible with LeRobot v3 and RLDS
-- **Multi-Robot Support** -- HalfCheetah, Ant, Walker2d, Hopper, Unitree Go1, and more
-- **Data Pipeline** -- Ingest from HDF5, NumPy, CSV, ROS bags, and Gymnasium environments
-- **Trajectory Generator** -- MuJoCo-based generation with domain randomization
-- **RL Baselines** -- PPO and SAC training with D4RL-style normalized evaluation
-- **Gait Metrics** -- Auto-compute stride frequency, energy efficiency, smoothness, and more
-- **Visualization** -- Trajectory plots, phase portraits, gait diagrams, reward signals
-- **CLI** -- Generate, train, evaluate, validate, export datasets from the terminal
-- **HF Integration** -- Native Hugging Face Datasets support for streaming and versioning
+- `checkpoints/phase2/go1/flat/selected_model.zip`
+- `checkpoints/phase2/go1/slope/selected_model.zip`
+- `checkpoints/phase2/go1/stairs/selected_model.zip`
+- `checkpoints/phase2/go1/*/summary.json`
+- `configs/sim2real/go1.yaml`
+- `configs/sim2real/anymal_d.yaml`
+- `configs/sim2real/anymal_d.alignment.json`
+- `results/sim2real_report.json`
+- `results/go1_head_to_head.json`
+- `results/go1_head_to_head_schema.json`
 
-## Benchmark Results
+For a conservative comparison against a Unitree-focused baseline, see `docs/unitree_comparison.md`.
 
-Trained baselines evaluated with D4RL-style normalized scores (0 = random, 100 = expert):
+## What Is In v2
 
-| Robot | Algorithm | Return | Norm. Score | Success Rate | Ep. Length |
-|-------|-----------|--------|-------------|-------------|------------|
-| HalfCheetah | PPO (1M steps) | 1955.4 | 18.0 | 100.0% | 1000 |
-| Ant | PPO (2M steps) | 1733.2 | 29.7 | 80.0% | 892 |
-| Walker2d | SAC (1M steps) | 4928.5 | **107.3** | 90.0% | 919 |
-| Hopper | PPO (500K steps) | 3507.9 | **108.4** | 100.0% | 1000 |
+- Unified Pydantic schema for locomotion trajectories and metadata
+- External data ingestion for GrandTour, TAIL, and Unitree retargeted motion
+- Training-time cross-embodiment alignment utilities
+- Reusable Go1 MuJoCo environment and PPO training script
+- Reduced-parameter sim-to-real identification with CMA-ES
+- Per-robot domain-randomization config generation
+- Procedural flat, slope, and stairs terrain generation
+- Canonical sim-to-real artifact layout for release-style checkpoints
 
-> Walker2d and Hopper achieve superhuman performance (normalized score > 100).
+## Phase 2 Results
 
-## Dataset Stats
+These numbers come from the checked-in artifacts and `results/sim2real_report.json`.
+
+### Go1 Canonical Policies
+
+| Terrain | Selected Source | Return Mean | Episode Length Mean | Success Rate |
+| --- | --- | ---: | ---: | ---: |
+| Flat | `best_checkpoint` | `985.70` | `1000.0` | `1.0` |
+| Slope | `init_policy` | `965.00` | `1000.0` | `1.0` |
+| Stairs | `init_policy` | `965.00` | `1000.0` | `1.0` |
+
+Notes:
+
+- Flat uses the best checkpoint from the dedicated flat-terrain PPO run.
+- Slope and stairs use the selected-model warm-start curriculum path.
+- In both non-flat terrains, the transferred flat policy outperformed fine-tuning, so the canonical artifact preserves the init policy instead of a degraded later checkpoint.
+
+### ANYmal-D Real Alignment
+
+The ANYmal-D closeout used a local GrandTour subset materialized into three `50 Hz` calibration slices of `1024` steps each.
 
 | Metric | Value |
-|--------|-------|
-| Total Episodes | ~4,000 |
-| Total Steps | ~2.5M |
-| Robots | HalfCheetah, Ant, Walker2d, Hopper |
-| Quality Tiers | random, expert, domain_random |
-| Format | Parquet (LeRobot v3-compatible) |
+| --- | ---: |
+| Joint RMSE | `0.0161` |
+| Velocity Correlation | `0.9997` |
+| Trajectory DTW | `0.0259` |
+| Episode Pairs | `3` |
+| Shared Steps | `1024` |
+| Shared Joints | `12` |
+
+Important caveat:
+
+- The ANYmal-D artifact is real-data-backed from GrandTour and uses the local staged asset at `assets/anymal_d/anymal_d.xml`.
+- The current backend is still the reduced kinematic replay backend, not a full actuator-level physics replay backend. The generated config says this explicitly in `configs/sim2real/anymal_d.yaml`.
+
+### Go1 Head-To-Head
+
+The strict shared-metric head-to-head in `results/go1_head_to_head.json` now includes two columns:
+
+- `olsd_v2_canonical`
+- `walk_these_ways_pretrain_v0` loaded through a native checkpoint adapter in the OLSD Go1 environment
+
+| Baseline | Terrain | Success Rate | Episode Length Mean | Forward Velocity Mean | Fall Count |
+| --- | --- | ---: | ---: | ---: | ---: |
+| OLSD v2 canonical | Flat | `1.0` | `1000.0` | `0.0048` | `0` |
+| OLSD v2 canonical | Slope | `1.0` | `1000.0` | `0.0052` | `0` |
+| OLSD v2 canonical | Stairs | `1.0` | `1000.0` | `0.0052` | `0` |
+| walk-these-ways pretrain-v0 | Flat | `0.0` | `33.0` | `0.1219` | `20` |
+| walk-these-ways pretrain-v0 | Slope | `0.0` | `31.0` | `0.1429` | `20` |
+| walk-these-ways pretrain-v0 | Stairs | `0.0` | `31.0` | `0.1429` | `20` |
+
+Important caveat:
+
+- This is a strict OLSD-protocol comparison, not the official native Isaac Gym evaluation used by the original `walk-these-ways` repository.
+- Reward returns are intentionally excluded; only shared physical metrics are compared.
+- Under this protocol, OLSD is much more stable. The `walk-these-ways` adapter still produces forward motion, but it does not transfer stably into the OLSD MuJoCo task yet.
 
 ## Installation
+
+Core install:
 
 ```bash
 pip install -e .
 ```
 
-With optional dependencies:
-```bash
-pip install -e ".[sim]"     # MuJoCo, PyTorch, Gymnasium, Stable-Baselines3
-pip install -e ".[dev]"     # Development (pytest, ruff)
-pip install -e ".[rosbag]"  # ROS bag support
-pip install -e ".[all]"     # Everything
-```
-
-## Quick Start
-
-### Python SDK
-
-```python
-import olsd
-
-# Generate trajectories
-from olsd.generation.mujoco_gen import generate_trajectories
-episodes = generate_trajectories("halfcheetah", n_episodes=50, policy="random")
-
-# Export to Parquet
-from olsd.pipeline.export import to_parquet
-to_parquet(episodes, "./data/my_dataset")
-
-# Load and filter
-dataset = olsd.load("./data/my_dataset")
-print(dataset.summary())
-
-# Visualize
-from olsd.sdk.visualization import plot_trajectory
-plot_trajectory(dataset[0])
-```
-
-### CLI
+Recommended for Phase 2 work:
 
 ```bash
-# Generate trajectories
-olsd generate --robot halfcheetah --robot ant --episodes 100 --output ./data/generated
-
-# Train RL baselines
-olsd train -r halfcheetah -a ppo -t 1000000
-olsd train -r walker2d -a sac -t 1000000
-
-# Evaluate with D4RL-style scores
-olsd eval --all -n 50
-
-# View dataset info
-olsd info ./data/generated
-
-# Validate a dataset
-olsd validate ./data/generated
-
-# Compute gait metrics
-olsd metrics ./data/generated
-
-# Export to different format
-olsd export ./data/generated --format hdf5 --output ./data/export
+pip install -e ".[sim,external,dev]"
 ```
 
-See [notebooks/quickstart.ipynb](notebooks/quickstart.ipynb) for an interactive walkthrough.
+Optional groups:
 
-## Data Schema
-
-Each **Episode** contains:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `observation.joint_positions` | `float[]` | Joint angles (rad) |
-| `observation.joint_velocities` | `float[]` | Joint velocities (rad/s) |
-| `observation.joint_torques` | `float[]?` | Applied torques (Nm) |
-| `observation.imu_orientation` | `float[4]?` | Quaternion [w,x,y,z] |
-| `observation.contact_forces` | `float[]?` | Ground reaction forces |
-| `action` | `float[]` | Motor commands |
-| `reward` | `float?` | Reward signal |
-| `done` | `bool` | Terminal flag |
-
-Each episode includes metadata: robot spec, terrain type, gait, speed, energy cost, data source, and attribution.
-
-## Supported Robots
-
-| Robot | Morphology | Joints | Source |
-|-------|-----------|--------|--------|
-| HalfCheetah | Planar | 6 | MuJoCo/Gymnasium |
-| Ant | Quadruped | 8 | MuJoCo/Gymnasium |
-| Walker2d | Biped | 6 | MuJoCo/Gymnasium |
-| Hopper | Monoped | 3 | MuJoCo/Gymnasium |
-| Unitree Go1 | Quadruped | 12 | MuJoCo Menagerie |
-
-## Project Structure
-
+```bash
+pip install -e ".[sim]"
+pip install -e ".[external]"
+pip install -e ".[dev]"
+pip install -e ".[rosbag]"
+pip install -e ".[all]"
 ```
+
+## Reproduce Phase 2
+
+### 1. Run the test suite
+
+```bash
+python -m pytest tests -q
+```
+
+### 2. Train the canonical Go1 flat policy
+
+```bash
+python scripts/train_go1.py \
+  --terrain flat \
+  --timesteps 200000 \
+  --n-envs 4 \
+  --batch-size 256 \
+  --output-dir checkpoints/go1-flat-sanity-v3 \
+  --sim2real-config configs/sim2real/go1.yaml \
+  --seed 0
+```
+
+### 3. Warm-start non-flat Go1 policies
+
+Slope:
+
+```bash
+python scripts/train_go1.py \
+  --terrain slope \
+  --timesteps 25000 \
+  --n-envs 1 \
+  --batch-size 64 \
+  --output-dir checkpoints/go1-slope-callback-warmstart-v2 \
+  --sim2real-config configs/sim2real/go1.yaml \
+  --init-policy checkpoints/go1-flat-sanity-v3/flat/best_model/best_model.zip \
+  --seed 0
+```
+
+Stairs:
+
+```bash
+python scripts/train_go1.py \
+  --terrain stairs \
+  --timesteps 25000 \
+  --n-envs 1 \
+  --batch-size 64 \
+  --output-dir checkpoints/go1-stairs-callback-warmstart-v1 \
+  --sim2real-config configs/sim2real/go1.yaml \
+  --init-policy checkpoints/go1-flat-sanity-v3/flat/best_model/best_model.zip \
+  --seed 0
+```
+
+### 4. License-check GrandTour
+
+```bash
+python scripts/license_check.py leggedrobotics/grand_tour_dataset
+```
+
+### 5. Materialize the ANYmal-D GrandTour subset
+
+```bash
+python scripts/materialize_grandtour_anymal.py \
+  --source-dir data/external/grandtour_subset \
+  --output-dir data/external/grandtour_anymal \
+  --max-episodes 3 \
+  --target-hz 50 \
+  --max-steps 1024
+```
+
+### 6. Run ANYmal-D reduced system ID
+
+```bash
+python -m olsd.sim2real.system_id \
+  --robot anymal_d \
+  --real-data data/external/grandtour_anymal \
+  --mjcf-path assets/anymal_d/anymal_d.xml \
+  --output configs/sim2real/anymal_d.yaml \
+  --generations 2 \
+  --population 4 \
+  --seed 0
+```
+
+### 7. Build the final sim-to-real report
+
+```bash
+python scripts/build_phase2_report.py \
+  --flat-summary checkpoints/phase2/go1/flat/summary.json \
+  --slope-summary checkpoints/phase2/go1/slope/summary.json \
+  --stairs-summary checkpoints/phase2/go1/stairs/summary.json \
+  --anymal-config configs/sim2real/anymal_d.yaml \
+  --anymal-alignment configs/sim2real/anymal_d.alignment.json \
+  --output results/sim2real_report.json
+```
+
+### 8. Run the strict Go1 head-to-head scaffold
+
+This script evaluates the canonical OLSD Go1 policies on shared physical metrics only. It can also load the public `walk-these-ways` `pretrain-v0` checkpoint through the native adapter.
+
+```bash
+python scripts/compare_go1_baselines.py \
+  --flat-policy checkpoints/phase2/go1/flat/selected_model.zip \
+  --slope-policy checkpoints/phase2/go1/slope/selected_model.zip \
+  --stairs-policy checkpoints/phase2/go1/stairs/selected_model.zip \
+  --sim2real-config configs/sim2real/go1.yaml \
+  --n-eval-episodes 20 \
+  --horizon 1000 \
+  --output results/go1_head_to_head.json
+```
+
+To include the public `walk-these-ways` baseline, first clone it locally:
+
+```bash
+git clone https://github.com/Improbable-AI/walk-these-ways.git external_tmp/walk_these_ways
+```
+
+Then run:
+
+```bash
+python scripts/compare_go1_baselines.py \
+  --flat-policy checkpoints/phase2/go1/flat/selected_model.zip \
+  --slope-policy checkpoints/phase2/go1/slope/selected_model.zip \
+  --stairs-policy checkpoints/phase2/go1/stairs/selected_model.zip \
+  --sim2real-config configs/sim2real/go1.yaml \
+  --include-wtw \
+  --wtw-root external_tmp/walk_these_ways \
+  --n-eval-episodes 20 \
+  --horizon 1000 \
+  --output results/go1_head_to_head.json
+```
+
+## Repository Layout
+
+```text
 olsd/
-├── schema/          # Pydantic models (trajectory, metadata, rewards)
-├── pipeline/        # Ingest, validate, compute metrics, export
-├── generation/      # MuJoCo trajectory generation + domain randomization
-├── sdk/             # Dataset loader + visualization
-├── benchmark/       # Baseline training + evaluation
-└── cli.py           # Command-line interface
+  pipeline/        ingestion, export, validation, license checks
+  schema/          episode, metadata, robot, terrain, and trajectory models
+  sdk/             dataset loading and visualization
+  sim2real/        system ID, alignment eval, domain configs, terrains, Go1 env
+
+configs/
+  robots/          robot specs
+  sim2real/        identified params and DR configs
+
+scripts/
+  train_go1.py
+  materialize_grandtour_anymal.py
+  build_phase2_report.py
+  license_check.py
+
+checkpoints/phase2/go1/
+results/
 ```
+
+## Current Scope
+
+Completed now:
+
+- Phase 1: schema and external ingestion
+- Phase 2: sim-to-real closeout and GitHub-ready artifacts
+
+Not yet shipped:
+
+- Phase 3: multi-embodiment diffusion prior
+- Phase 4: release packaging, paper draft, landing page refresh
 
 ## License
 
-Apache 2.0. Datasets may carry their own licenses (CC-BY-4.0, CC0, MIT).
+Code is Apache 2.0. External datasets keep their own licenses.
+
+Verified in this repo:
+
+- GrandTour: permissive and safe to ingest after license check
+- Asset and dataset provenance are recorded in the generated artifacts
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting data, code, and bug reports.
-
----
-
-*Built by Kanishq Gandharv -- Making robot locomotion research open and reproducible.*
+See `CONTRIBUTING.md` for contribution guidelines.

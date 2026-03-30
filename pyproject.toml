@@ -53,6 +53,7 @@ sim = [
     "torch>=2.0",
     "gymnasium[mujoco]>=0.29",
     "stable-baselines3>=2.0",
+    "cma>=3.3",
 ]
 isaac = [
     # Isaac Gym must be installed manually from NVIDIA's site
@@ -61,6 +62,9 @@ isaac = [
 rosbag = [
     "rosbags>=0.9",
 ]
+external = [
+    "zarr>=2.16",
+]
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
@@ -68,7 +72,7 @@ dev = [
     "ruff>=0.1",
 ]
 all = [
-    "olsd[sim,rosbag,dev]",
+    "olsd[sim,rosbag,external,dev]",
 ]
 
 [project.scripts]

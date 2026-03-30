@@ -1,0 +1,38 @@
+robot_id: anymal_d
+identified_params:
+  global_friction: 1.025814852337508
+  mass_scale: 1.4582968981153062
+  joint_damping_scale: 1.2794422379848693
+  joint_armature_scale: 0.9801412873959465
+  kp_scale: 0.9992788123665318
+  kd_scale: 0.9725687323880988
+  actuator_latency_ms: 2.1986974026007076
+  observation_noise_std: 0.0037740990899092644
+domain_randomization:
+  friction_range:
+  - 0.8719426244868818
+  - 1.179687080188134
+  mass_scale_range:
+  - 1.2395523633980103
+  - 1.5
+  joint_damping_range:
+  - 1.0875259022871389
+  - 1.4713585736825998
+  joint_armature_range:
+  - 0.8331200942865545
+  - 1.1271624805053384
+  kp_range:
+  - 0.8493869905115521
+  - 1.1491706342215116
+  kd_range:
+  - 0.826683422529884
+  - 1.1184540422463136
+  latency_range_ms:
+  - 0.0
+  - 5.198697402600708
+  observation_noise_std: 0.005
+template_only: false
+notes:
+- Real-data alignment derived from local GrandTour ANYmal episodes.
+- This run used the reduced kinematic replay backend on real ANYmal episodes; the
+  staged ANYmal asset is available locally for future physics-backed replay.

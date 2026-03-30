@@ -144,6 +144,17 @@ class EpisodeMetadata(BaseModel):
     policy_name: str | None = None  # e.g., "ppo_flat_v1"
     random_seed: int | None = None
 
+    # External dataset provenance
+    external_dataset: str | None = None      # "grandtour", "unitree_retargeted", "tail"
+    external_episode_id: str | None = None   # original ID from source dataset
+
+    # Sim-to-real alignment
+    sim_real_pair_id: str | None = None      # links sim episode to real episode
+    dynamics_params: dict | None = None      # identified system params (masses, friction, etc.)
+
+    # Velocity tracking task
+    velocity_command: list[float] | None = None  # [vx, vy, yaw_rate] command being tracked
+
     # Attribution
     contributor: str | None = None
     institution: str | None = None
