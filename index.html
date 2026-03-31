@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OLSD -- Open Locomotion Skills Dataset</title>
-  <meta name="description" content="A unified, open-source benchmark for legged robot locomotion across diverse morphologies and terrains.">
+  <title>OLSD v2 -- Open Locomotion Skills Dataset</title>
+  <meta name="description" content="A unified, open-source multi-embodiment foundation and sim-to-real toolkit for legged robots.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -211,9 +211,9 @@
 
   <div class="page">
     <section class="hero">
-      <div class="hero-tag"><span class="dot"></span> v0.1 Benchmark Ready</div>
+      <div class="hero-tag"><span class="dot"></span> v2.0 Sim-to-Real Toolkit</div>
       <h1>Open Locomotion<br><span class="grad">Skills Dataset</span></h1>
-      <p>A unified benchmark for legged robot locomotion. 4 robots, 4,200 expert trajectories, 2.7M timesteps with RL baselines achieving superhuman performance.</p>
+      <p>A unified multi-embodiment foundation and sim-to-real toolkit for legged robots. Featuring hardware ingestors for Unitree and ANYmal, procedural terrains, and a strict Go1 baseline benchmark.</p>
       <div class="hero-btns">
         <a class="btn btn-p" href="#benchmark">View Benchmark</a>
         <a class="btn btn-s" href="#quickstart">Quick Start</a>
@@ -221,126 +221,127 @@
     </section>
 
     <div class="stats">
-      <div class="sc"><div class="sv sv-a">4,200</div><div class="sl">Episodes</div></div>
-      <div class="sc"><div class="sv sv-c">2.72M</div><div class="sl">Timesteps</div></div>
-      <div class="sc"><div class="sv sv-g">4</div><div class="sl">Robots</div></div>
-      <div class="sc"><div class="sv sv-w">108.4</div><div class="sl">Best Score</div></div>
-      <div class="sc"><div class="sv">3</div><div class="sl">Quality Tiers</div></div>
+      <div class="sc"><div class="sv sv-a">Head-to-Head</div><div class="sl">Strict Benchmarks</div></div>
+      <div class="sc"><div class="sv sv-c">12+</div><div class="sl">Embodiments</div></div>
+      <div class="sc"><div class="sv sv-g">99.9%</div><div class="sl">Sim-to-Real Alignment</div></div>
+      <div class="sc"><div class="sv sv-w">3</div><div class="sl">Procedural Terrains</div></div>
+      <div class="sc"><div class="sv">v2.0</div><div class="sl">Release</div></div>
     </div>
 
     <!-- BENCHMARK -->
     <section class="sec" id="benchmark">
       <div class="sec-h">
-        <h2 class="sec-t">Benchmark Leaderboard</h2>
-        <p class="sec-d">D4RL-style normalized scores. 0 = random, 100 = expert. Scores above 100 indicate superhuman performance.</p>
+        <h2 class="sec-t">Go1 Strict Head-to-Head Benchmark</h2>
+        <p class="sec-d">OLSD v2 evaluates baselines precisely by stripping out incompatible reward scaling. Shared physical metrics only.</p>
       </div>
       <div class="tw">
         <table id="leaderboard">
           <thead><tr>
-            <th onclick="sortTable(0)">#<span class="si">&#9650;</span></th>
-            <th onclick="sortTable(1)">Robot<span class="si">&#9650;</span></th>
-            <th onclick="sortTable(2)">Algorithm<span class="si">&#9650;</span></th>
-            <th onclick="sortTable(3)">Norm. Score<span class="si">&#9650;</span></th>
-            <th onclick="sortTable(4)">Return<span class="si">&#9650;</span></th>
-            <th onclick="sortTable(5)">Success<span class="si">&#9650;</span></th>
-            <th onclick="sortTable(6)">Ep. Length<span class="si">&#9650;</span></th>
-            <th onclick="sortTable(7)">Train Steps<span class="si">&#9650;</span></th>
+            <th onclick="sortTable(0)">Baseline<span class="si">&#9650;</span></th>
+            <th onclick="sortTable(1)">Terrain<span class="si">&#9650;</span></th>
+            <th onclick="sortTable(2)">Success Rate<span class="si">&#9650;</span></th>
+            <th onclick="sortTable(3)">Fall Count<span class="si">&#9650;</span></th>
+            <th onclick="sortTable(4)">Ep. Length<span class="si">&#9650;</span></th>
+            <th onclick="sortTable(5)">Fwd Velocity<span class="si">&#9650;</span></th>
           </tr></thead>
           <tbody>
             <tr>
-              <td class="rk"><span class="rk-badge rk-1">1</span></td>
-              <td><div class="rc"><div class="ri ri-m"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div><div class="rn">Hopper</div><div class="rm">Monoped / 3 joints</div></div></div></td>
-              <td><span class="ab ab-ppo">PPO</span></td>
-              <td><div class="score s-s">108.4</div><div class="sb-w"><div class="sb sb-s" style="width:100%"></div></div></td>
-              <td class="rv">3,507.9</td>
-              <td><span class="suc suc-h">100%</span></td>
-              <td class="rv">1,000</td>
-              <td class="rv">500K</td>
+              <td><div class="rn" style="color:var(--accent)">OLSD v2 canonical</div></td>
+              <td><div class="rc"><div class="ri ri-q"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="rn">Flat</div></div></td>
+              <td><div class="score s-s" style="font-size:1.1rem">1.0</div></td>
+              <td class="rv">0</td>
+              <td class="rv">1000.0</td>
+              <td class="rv">0.0048 m/s</td>
             </tr>
             <tr>
-              <td class="rk"><span class="rk-badge rk-2">2</span></td>
-              <td><div class="rc"><div class="ri ri-b"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div><div class="rn">Walker2d</div><div class="rm">Biped / 6 joints</div></div></div></td>
-              <td><span class="ab ab-sac">SAC</span></td>
-              <td><div class="score s-s">107.3</div><div class="sb-w"><div class="sb sb-s" style="width:99%"></div></div></td>
-              <td class="rv">4,928.5</td>
-              <td><span class="suc suc-m">90%</span></td>
-              <td class="rv">919</td>
-              <td class="rv">1M</td>
+              <td><div class="rn" style="color:var(--accent)">OLSD v2 canonical</div></td>
+              <td><div class="rc"><div class="ri ri-b"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="rn">Slope</div></div></td>
+              <td><div class="score s-s" style="font-size:1.1rem">1.0</div></td>
+              <td class="rv">0</td>
+              <td class="rv">1000.0</td>
+              <td class="rv">0.0052 m/s</td>
             </tr>
             <tr>
-              <td class="rk"><span class="rk-badge rk-3">3</span></td>
-              <td><div class="rc"><div class="ri ri-q"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div><div class="rn">Ant</div><div class="rm">Quadruped / 8 joints</div></div></div></td>
-              <td><span class="ab ab-ppo">PPO</span></td>
-              <td><div class="score s-g">29.7</div><div class="sb-w"><div class="sb sb-g" style="width:27%"></div></div></td>
-              <td class="rv">1,733.2</td>
-              <td><span class="suc suc-m">80%</span></td>
-              <td class="rv">892</td>
-              <td class="rv">2M</td>
+              <td><div class="rn" style="color:var(--accent)">OLSD v2 canonical</div></td>
+              <td><div class="rc"><div class="ri ri-m"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="rn">Stairs</div></div></td>
+              <td><div class="score s-s" style="font-size:1.1rem">1.0</div></td>
+              <td class="rv">0</td>
+              <td class="rv">1000.0</td>
+              <td class="rv">0.0052 m/s</td>
             </tr>
             <tr>
-              <td class="rk"><span class="rk-badge rk-4">4</span></td>
-              <td><div class="rc"><div class="ri ri-p"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div><div class="rn">HalfCheetah</div><div class="rm">Planar / 6 joints</div></div></div></td>
-              <td><span class="ab ab-ppo">PPO</span></td>
-              <td><div class="score s-m">18.0</div><div class="sb-w"><div class="sb sb-m" style="width:17%"></div></div></td>
-              <td class="rv">1,955.4</td>
-              <td><span class="suc suc-h">100%</span></td>
-              <td class="rv">1,000</td>
-              <td class="rv">1M</td>
+              <td><div class="rn" style="color:var(--text-dim)">walk-these-ways (pretrain-v0)</div></td>
+              <td><div class="rc"><div class="ri" style="background:rgba(255,255,255,0.05)"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="rn">Flat</div></div></td>
+              <td><div class="score s-m" style="font-size:1.1rem">0.0</div></td>
+              <td class="rv">20</td>
+              <td class="rv">33.0</td>
+              <td class="rv">0.1219 m/s</td>
+            </tr>
+            <tr>
+              <td><div class="rn" style="color:var(--text-dim)">walk-these-ways (pretrain-v0)</div></td>
+              <td><div class="rc"><div class="ri" style="background:rgba(255,255,255,0.05)"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="rn">Stairs</div></div></td>
+              <td><div class="score s-m" style="font-size:1.1rem">0.0</div></td>
+              <td class="rv">20</td>
+              <td class="rv">31.0</td>
+              <td class="rv">0.1429 m/s</td>
             </tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <!-- ROBOTS -->
     <section class="sec" id="robots">
       <div class="sec-h">
-        <h2 class="sec-t">Supported Robots</h2>
-        <p class="sec-d">Diverse morphologies from monopeds to quadrupeds, all simulated in MuJoCo.</p>
+        <h2 class="sec-t">Supported Real & Sim Robots</h2>
+        <p class="sec-d">Expanding beyond simple planar agents into real-world quadruped and humanoid hardware architectures.</p>
       </div>
       <div class="rg">
-        <div class="robot-card">
+        <!-- ANYmal D -->
+        <div class="robot-card" style="border-color: rgba(6, 182, 212, 0.4); box-shadow: 0 0 20px rgba(6, 182, 212, 0.1);">
           <div class="robot-card-top">
-            <div class="robot-card-icon ri-p"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
-            <div><div class="robot-card-name">HalfCheetah</div><div class="robot-card-morph">Planar runner / 6 DOF</div></div>
+            <div class="robot-card-icon ri-b"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+            <div><div class="robot-card-name">ANYmal-D</div><div class="robot-card-morph">Quadruped / 12 DOF</div></div>
           </div>
           <div class="robot-card-grid">
-            <div><div class="robot-card-v sv-a">1,200</div><div class="robot-card-l">Episodes</div></div>
-            <div><div class="robot-card-v">6</div><div class="robot-card-l">Joints</div></div>
-            <div><div class="robot-card-v sv-g">18.0</div><div class="robot-card-l">Score</div></div>
+            <div><div class="robot-card-v sv-c">Real</div><div class="robot-card-l">Data Source</div></div>
+            <div><div class="robot-card-v">12</div><div class="robot-card-l">Joints</div></div>
+            <div><div class="robot-card-v sv-c">99.9%</div><div class="robot-card-l">Alignment</div></div>
           </div>
         </div>
-        <div class="robot-card">
+        <!-- Go1 -->
+        <div class="robot-card" style="border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);">
           <div class="robot-card-top">
-            <div class="robot-card-icon ri-q"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
-            <div><div class="robot-card-name">Ant</div><div class="robot-card-morph">Quadruped / 8 DOF</div></div>
+            <div class="robot-card-icon ri-q"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+            <div><div class="robot-card-name">Unitree Go1</div><div class="robot-card-morph">Quadruped / 12 DOF</div></div>
           </div>
           <div class="robot-card-grid">
-            <div><div class="robot-card-v sv-a">1,000</div><div class="robot-card-l">Episodes</div></div>
-            <div><div class="robot-card-v">8</div><div class="robot-card-l">Joints</div></div>
-            <div><div class="robot-card-v sv-g">29.7</div><div class="robot-card-l">Score</div></div>
+            <div><div class="robot-card-v sv-g">Sim</div><div class="robot-card-l">Data Source</div></div>
+            <div><div class="robot-card-v">12</div><div class="robot-card-l">Joints</div></div>
+            <div><div class="robot-card-v sv-g">PPO</div><div class="robot-card-l">Baseline</div></div>
           </div>
         </div>
+        <!-- Unitree G1 -->
         <div class="robot-card">
           <div class="robot-card-top">
-            <div class="robot-card-icon ri-b"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 2v6M8 8h8l2 6H6l2-6zM8 14v6M16 14v6M10 20h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div><div class="robot-card-name">Walker2d</div><div class="robot-card-morph">Biped / 6 DOF</div></div>
+            <div class="robot-card-icon ri-p"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 2v6M8 8h8l2 6H6l2-6zM8 14v6M16 14v6M10 20h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div><div class="robot-card-name">Unitree G1</div><div class="robot-card-morph">Humanoid / 23 DOF</div></div>
           </div>
           <div class="robot-card-grid">
-            <div><div class="robot-card-v sv-a">1,000</div><div class="robot-card-l">Episodes</div></div>
-            <div><div class="robot-card-v">6</div><div class="robot-card-l">Joints</div></div>
-            <div><div class="robot-card-v sv-g">107.3</div><div class="robot-card-l">Score</div></div>
+            <div><div class="robot-card-v sv-a">Mocap</div><div class="robot-card-l">Data Source</div></div>
+            <div><div class="robot-card-v">23</div><div class="robot-card-l">Joints</div></div>
+            <div><div class="robot-card-v sv-a">TBD</div><div class="robot-card-l">Baseline</div></div>
           </div>
         </div>
+        <!-- TAIL -->
         <div class="robot-card">
           <div class="robot-card-top">
-            <div class="robot-card-icon ri-m"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 2v8M9 10h6l1 5H8l1-5zM12 15v5M10 20h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div><div class="robot-card-name">Hopper</div><div class="robot-card-morph">Monoped / 3 DOF</div></div>
+            <div class="robot-card-icon ri-m"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+            <div><div class="robot-card-name">TAIL</div><div class="robot-card-morph">Quadruped / 12 DOF</div></div>
           </div>
           <div class="robot-card-grid">
-            <div><div class="robot-card-v sv-a">1,000</div><div class="robot-card-l">Episodes</div></div>
-            <div><div class="robot-card-v">3</div><div class="robot-card-l">Joints</div></div>
-            <div><div class="robot-card-v sv-g">108.4</div><div class="robot-card-l">Score</div></div>
+            <div><div class="robot-card-v sv-w">Mixed</div><div class="robot-card-l">Data Source</div></div>
+            <div><div class="robot-card-v">12</div><div class="robot-card-l">Joints</div></div>
+            <div><div class="robot-card-v sv-w">Sand</div><div class="robot-card-l">Terrain</div></div>
           </div>
         </div>
       </div>
@@ -357,14 +358,17 @@
         <div class="cb-b"><span class="cmt"># Install</span>
 pip install -e <span class="str">".[sim,dev]"</span>
 
-<span class="cmt"># Generate expert trajectories</span>
-olsd generate -r halfcheetah -p checkpoints/ppo/best_model.zip -n <span class="num">500</span>
+        <div class="cb-b"><span class="cmt"># Train a Go1 model with sim-to-real configs</span>
+python scripts/train_go1.py \
+  --terrain stairs \
+  --output-dir checkpoints/go1-stairs \
+  --sim2real-config configs/sim2real/go1.yaml
 
-<span class="cmt"># Train a SAC baseline</span>
-olsd train -r walker2d -a sac -t <span class="num">1000000</span>
-
-<span class="cmt"># Evaluate all trained models</span>
-olsd eval --all -n <span class="num">50</span></div>
+<span class="cmt"># Compare head-to-head strict baselines</span>
+python scripts/compare_go1_baselines.py \
+  --flat-policy checkpoints/phase2/go1/flat/selected_model.zip \
+  --sim2real-config configs/sim2real/go1.yaml \
+  --output results/go1_head_to_head.json</div>
       </div>
       <div class="cb" style="margin-top:1rem">
         <div class="cb-h"><span class="cb-dot cb-r"></span><span class="cb-dot cb-y"></span><span class="cb-dot cb-g"></span><span class="cb-t">python</span></div>
