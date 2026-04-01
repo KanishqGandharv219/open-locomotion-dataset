@@ -188,6 +188,9 @@ class Go1SimEnv(gym.Env if gym is not None else object):
         max_steps: int = 1000,
         frame_skip: int = 10,
         render_mode: str | None = None,
+        target_velocity: float = 0.5,
+        randomize_velocity: bool = True,
+        velocity_range: tuple[float, float] = (0.3, 0.8),
     ):
         if gym is None or spaces is None or mujoco is None:  # pragma: no cover - optional dependency
             raise ImportError("Go1SimEnv requires gymnasium and mujoco; install with `.[sim]`.")
@@ -198,6 +201,10 @@ class Go1SimEnv(gym.Env if gym is not None else object):
         self.max_steps = max_steps
         self.frame_skip = frame_skip
         self.render_mode = render_mode
+        self._target_velocity_default = float(target_velocity)
+        self._randomize_velocity = bool(randomize_velocity)
+        self._velocity_range = tuple(velocity_range)
+        self._target_velocity = float(target_velocity)
 
         self.model = mujoco.MjModel.from_xml_string(
             build_go1_xml(
@@ -237,6 +244,13 @@ class Go1SimEnv(gym.Env if gym is not None else object):
         super().reset(seed=seed)
         if seed is not None:
             self._rng = np.random.default_rng(seed)
+
+        # Randomize target velocity per episode for robust generalization
+        if self._randomize_velocity:
+            lo, hi = self._velocity_range
+            self._target_velocity = float(self._rng.uniform(lo, hi))
+        else:
+            self._target_velocity = self._target_velocity_default
 
         mujoco.mj_resetData(self.model, self.data)
         self._set_standing_pose()
@@ -407,29 +421,42 @@ class Go1SimEnv(gym.Env if gym is not None else object):
         return bool(clearance < clearance_threshold or upright_alignment < upright_threshold)
 
     def _compute_reward(self, ctrl: np.ndarray, *, terminated: bool) -> float:
+        """Velocity-tracking reward with regularization penalties.
+
+        Uses the standard exp(-k * error^2) tracking form from recent
+        locomotion RL literature. The target velocity is randomized per
+        episode during training for robust generalization across terrains.
+        """
         forward_velocity = self._forward_speed()
         clearance = self._terrain_clearance()
         upright_alignment = self._upright_alignment()
         joint_positions = self.data.qpos[7:19]
-        joint_acc = np.clip(self.data.qacc[6:], -30.0, 30.0)
+        z_velocity = float(self.data.qvel[2])  # vertical bounce
+        yaw_rate = float(self.data.qvel[5])    # spinning
 
-        alive_bonus = 1.0
-        forward_reward = 2.0 * float(np.clip(forward_velocity, -0.5, 1.5))
-        height_penalty = -4.0 * abs(clearance - self._target_clearance)
-        orientation_penalty = -3.0 * max(self._reference_upright - upright_alignment, 0.0)
-        posture_penalty = -0.05 * float(np.sum(np.square(joint_positions - GO1_STANDING_POSE)))
-        action_rate_penalty = -0.02 * float(np.sum(np.square(ctrl - self._last_ctrl)))
-        smoothness_penalty = -0.0002 * float(np.sum(np.square(joint_acc)))
+        # --- Tracking rewards (positive, dominant) ---
+        vel_error = forward_velocity - self._target_velocity
+        tracking_lin_vel = 2.0 * float(np.exp(-4.0 * vel_error ** 2))
+        tracking_ang_vel = 0.5 * float(np.exp(-4.0 * yaw_rate ** 2))
+
+        # --- Regularization penalties (negative, shaping) ---
+        lin_vel_z_penalty = -2.0 * float(z_velocity ** 2)
+        height_penalty = -1.0 * abs(clearance - self._target_clearance)
+        orientation_penalty = -1.0 * max(self._reference_upright - upright_alignment, 0.0)
+        torque_penalty = -0.0002 * float(np.sum(np.square(ctrl)))
+        action_rate_penalty = -0.01 * float(np.sum(np.square(ctrl - self._last_ctrl)))
+        posture_penalty = -0.02 * float(np.sum(np.square(joint_positions - GO1_STANDING_POSE)))
         fall_penalty = -50.0 if terminated else 0.0
 
         return (
-            alive_bonus
-            + forward_reward
+            tracking_lin_vel
+            + tracking_ang_vel
+            + lin_vel_z_penalty
             + height_penalty
             + orientation_penalty
-            + posture_penalty
+            + torque_penalty
             + action_rate_penalty
-            + smoothness_penalty
+            + posture_penalty
             + fall_penalty
         )
 

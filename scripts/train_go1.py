@@ -48,6 +48,7 @@ def train_go1(
     output_dir: str | Path = "checkpoints/go1",
     sim2real_config: str | Path | None = None,
     init_policy: str | Path | None = None,
+    target_velocity: float = 0.5,
     seed: int = 42,
 ) -> dict:
     """Train PPO on the Go1 env and save a compact terrain summary."""
@@ -67,6 +68,9 @@ def train_go1(
                 terrain_params=terrain_params,
                 sim_params=sim_params,
                 max_steps=1000,
+                target_velocity=target_velocity,
+                randomize_velocity=True,
+                velocity_range=(0.3, 0.8),
             )
             env.reset(seed=env_seed)
             return env
@@ -127,6 +131,7 @@ def train_go1(
         terrain=terrain,
         terrain_params=terrain_params,
         sim_params=sim_params,
+        target_velocity=target_velocity,
         n_eval_episodes=5,
         seed=seed,
     )
@@ -134,6 +139,7 @@ def train_go1(
         terrain=terrain,
         terrain_params=terrain_params,
         sim_params=sim_params,
+        target_velocity=target_velocity,
         model=model,
         n_eval_episodes=5,
         seed=seed + 1000,
@@ -149,6 +155,7 @@ def train_go1(
             terrain=terrain,
             terrain_params=terrain_params,
             sim_params=sim_params,
+            target_velocity=target_velocity,
             model=best_model,
             n_eval_episodes=5,
             seed=seed + 2000,
@@ -162,6 +169,7 @@ def train_go1(
             terrain=terrain,
             terrain_params=terrain_params,
             sim_params=sim_params,
+            target_velocity=target_velocity,
             model=init_model,
             n_eval_episodes=5,
             seed=seed + 3000,
@@ -212,6 +220,7 @@ def evaluate_go1_policy(
     terrain_params: dict,
     sim_params: SimParams,
     model=None,
+    target_velocity: float = 0.5,
     n_eval_episodes: int = 5,
     seed: int = 0,
 ) -> dict:
@@ -226,6 +235,8 @@ def evaluate_go1_policy(
             terrain_params=terrain_params,
             sim_params=sim_params,
             max_steps=1000,
+            target_velocity=target_velocity,
+            randomize_velocity=False,  # Fixed velocity for deterministic eval
         )
         observation, _ = env.reset(seed=seed + episode_idx)
         episode_return = 0.0
@@ -349,6 +360,9 @@ def main() -> None:
     parser.add_argument("--init-policy", default=None)
     parser.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE)
     parser.add_argument("--learning-rate", type=float, default=DEFAULT_LR)
+    parser.add_argument("--target-velocity", type=float, default=0.5,
+                        help="Target forward velocity in m/s (default: 0.5). "
+                             "During training, velocity is randomized per episode from [0.3, 0.8].")
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
@@ -368,6 +382,7 @@ def main() -> None:
         output_dir=args.output_dir,
         sim2real_config=args.sim2real_config,
         init_policy=args.init_policy,
+        target_velocity=args.target_velocity,
         seed=args.seed,
     )
 

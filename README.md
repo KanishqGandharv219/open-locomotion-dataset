@@ -46,19 +46,20 @@ For a conservative comparison against a Unitree-focused baseline, see `docs/unit
 
 These numbers come from the checked-in artifacts and `results/sim2real_report.json`.
 
-### Go1 Canonical Policies
+### Go1 Canonical Policies (Velocity-Tracking v1)
 
-| Terrain | Selected Source | Return Mean | Episode Length Mean | Success Rate |
-| --- | --- | ---: | ---: | ---: |
-| Flat | `best_checkpoint` | `985.70` | `1000.0` | `1.0` |
-| Slope | `init_policy` | `965.00` | `1000.0` | `1.0` |
-| Stairs | `init_policy` | `965.00` | `1000.0` | `1.0` |
+| Terrain | Status | Return Mean | Episode Length Mean | Forward Velocity | Success Rate |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Flat | **canonical** | `2088.6` | `1000.0` | `0.61 m/s` | `1.0` |
+| Stairs | **canonical** | `1006.9` | `920.6` | `0.09 m/s` | `0.8` |
+| Slope | *in progress* | `248.0` | `228.8` | — | `0.0` |
 
 Notes:
 
-- Flat uses the best checkpoint from the dedicated flat-terrain PPO run.
-- Slope and stairs use the selected-model warm-start curriculum path.
-- In both non-flat terrains, the transferred flat policy outperformed fine-tuning, so the canonical artifact preserves the init policy instead of a degraded later checkpoint.
+- Flat policy uses exponential velocity-tracking reward with per-episode velocity randomization from `[0.3, 0.8]` m/s during training.
+- Stairs uses the flat policy as warm-start (init_policy), which outperformed dedicated fine-tuning.
+- Slope requires longer training (>2M steps) or terrain-specific reward tuning; deferred to v2.0.1.
+- The flat policy covers **12 meters** in 1000 steps at **0.60 m/s** average, verified independently.
 
 ### ANYmal-D Real Alignment
 
@@ -80,25 +81,18 @@ Important caveat:
 
 ### Go1 Head-To-Head
 
-The strict shared-metric head-to-head in `results/go1_head_to_head.json` now includes two columns:
-
-- `olsd_v2_canonical`
-- `walk_these_ways_pretrain_v0` loaded through a native checkpoint adapter in the OLSD Go1 environment
+The strict shared-metric head-to-head in `results/go1_head_to_head.json` evaluates the velocity-tracking canonical policies:
 
 | Baseline | Terrain | Success Rate | Episode Length Mean | Forward Velocity Mean | Fall Count |
 | --- | --- | ---: | ---: | ---: | ---: |
-| OLSD v2 canonical | Flat | `1.0` | `1000.0` | `0.0048` | `0` |
-| OLSD v2 canonical | Slope | `1.0` | `1000.0` | `0.0052` | `0` |
-| OLSD v2 canonical | Stairs | `1.0` | `1000.0` | `0.0052` | `0` |
-| walk-these-ways pretrain-v0 | Flat | `0.0` | `33.0` | `0.1219` | `20` |
-| walk-these-ways pretrain-v0 | Slope | `0.0` | `31.0` | `0.1429` | `20` |
-| walk-these-ways pretrain-v0 | Stairs | `0.0` | `31.0` | `0.1429` | `20` |
+| OLSD v2 veltrack | Flat | `1.0` | `1000.0` | `0.6108` | `0` |
+| OLSD v2 veltrack | Stairs | `0.8` | `874.2` | `0.0893` | `4` |
 
 Important caveat:
 
-- This is a strict OLSD-protocol comparison, not the official native Isaac Gym evaluation used by the original `walk-these-ways` repository.
-- Reward returns are intentionally excluded; only shared physical metrics are compared.
-- Under this protocol, OLSD is much more stable. The `walk-these-ways` adapter still produces forward motion, but it does not transfer stably into the OLSD MuJoCo task yet.
+- These are velocity-tracking policies trained with per-episode velocity randomization.
+- Slope is excluded from canonical v2.0 results and will be revisited in v2.0.1.
+- The flat policy demonstrates genuine locomotion: 12m displacement at 0.6 m/s average.
 
 ## Installation
 

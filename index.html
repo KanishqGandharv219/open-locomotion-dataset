@@ -221,8 +221,8 @@
     </section>
 
     <div class="stats">
-      <div class="sc"><div class="sv sv-a">Head-to-Head</div><div class="sl">Strict Benchmarks</div></div>
-      <div class="sc"><div class="sv sv-c">12+</div><div class="sl">Embodiments</div></div>
+      <div class="sc"><div class="sv sv-a">0.61 m/s</div><div class="sl">Forward Velocity</div></div>
+      <div class="sc"><div class="sv sv-c">12m</div><div class="sl">Flat Displacement</div></div>
       <div class="sc"><div class="sv sv-g">99.9%</div><div class="sl">Sim-to-Real Alignment</div></div>
       <div class="sc"><div class="sv sv-w">3</div><div class="sl">Procedural Terrains</div></div>
       <div class="sc"><div class="sv">v2.0</div><div class="sl">Release</div></div>
@@ -231,8 +231,8 @@
     <!-- BENCHMARK -->
     <section class="sec" id="benchmark">
       <div class="sec-h">
-        <h2 class="sec-t">Go1 Strict Head-to-Head Benchmark</h2>
-        <p class="sec-d">OLSD v2 evaluates baselines precisely by stripping out incompatible reward scaling. Shared physical metrics only.</p>
+        <h2 class="sec-t">Go1 Velocity-Tracking Benchmark</h2>
+        <p class="sec-d">Genuine locomotion at 0.6 m/s. Per-episode velocity randomization for robust generalization across terrains.</p>
       </div>
       <div class="tw">
         <table id="leaderboard">
@@ -246,44 +246,28 @@
           </tr></thead>
           <tbody>
             <tr>
-              <td><div class="rn" style="color:var(--accent)">OLSD v2 canonical</div></td>
+              <td><div class="rn" style="color:var(--accent)">OLSD v2 veltrack</div></td>
               <td><div class="rc"><div class="ri ri-q"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="rn">Flat</div></div></td>
               <td><div class="score s-s" style="font-size:1.1rem">1.0</div></td>
               <td class="rv">0</td>
               <td class="rv">1000.0</td>
-              <td class="rv">0.0048 m/s</td>
+              <td><div class="score s-s">0.6108 m/s</div></td>
             </tr>
             <tr>
-              <td><div class="rn" style="color:var(--accent)">OLSD v2 canonical</div></td>
-              <td><div class="rc"><div class="ri ri-b"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="rn">Slope</div></div></td>
-              <td><div class="score s-s" style="font-size:1.1rem">1.0</div></td>
-              <td class="rv">0</td>
-              <td class="rv">1000.0</td>
-              <td class="rv">0.0052 m/s</td>
-            </tr>
-            <tr>
-              <td><div class="rn" style="color:var(--accent)">OLSD v2 canonical</div></td>
+              <td><div class="rn" style="color:var(--accent)">OLSD v2 veltrack</div></td>
               <td><div class="rc"><div class="ri ri-m"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="rn">Stairs</div></div></td>
-              <td><div class="score s-s" style="font-size:1.1rem">1.0</div></td>
-              <td class="rv">0</td>
-              <td class="rv">1000.0</td>
-              <td class="rv">0.0052 m/s</td>
+              <td><div class="score s-g" style="font-size:1.1rem">0.8</div></td>
+              <td class="rv">4</td>
+              <td class="rv">874.2</td>
+              <td class="rv">0.0893 m/s</td>
             </tr>
             <tr>
-              <td><div class="rn" style="color:var(--text-dim)">walk-these-ways (pretrain-v0)</div></td>
-              <td><div class="rc"><div class="ri" style="background:rgba(255,255,255,0.05)"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="rn">Flat</div></div></td>
+              <td><div class="rn" style="color:var(--text-muted)">OLSD v2 veltrack</div></td>
+              <td><div class="rc"><div class="ri" style="background:rgba(255,255,255,0.04)"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="rn">Slope <span style="font-size:0.65rem;color:var(--text-muted)">(in progress)</span></div></div></td>
               <td><div class="score s-m" style="font-size:1.1rem">0.0</div></td>
-              <td class="rv">20</td>
-              <td class="rv">33.0</td>
-              <td class="rv">0.1219 m/s</td>
-            </tr>
-            <tr>
-              <td><div class="rn" style="color:var(--text-dim)">walk-these-ways (pretrain-v0)</div></td>
-              <td><div class="rc"><div class="ri" style="background:rgba(255,255,255,0.05)"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="rn">Stairs</div></div></td>
-              <td><div class="score s-m" style="font-size:1.1rem">0.0</div></td>
-              <td class="rv">20</td>
-              <td class="rv">31.0</td>
-              <td class="rv">0.1429 m/s</td>
+              <td class="rv">—</td>
+              <td class="rv">228.8</td>
+              <td class="rv">—</td>
             </tr>
           </tbody>
         </table>

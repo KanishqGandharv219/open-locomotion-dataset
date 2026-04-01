@@ -84,6 +84,21 @@ Interpretation:
 - The adapted `walk-these-ways` baseline still produces forward motion, so the adapter is not degenerate.
 - But it does not transfer stably into this benchmark as currently configured.
 
+### Environment Delta
+
+The following table documents the known differences between the OLSD Go1 evaluation environment and the native `walk-these-ways` training environment. Performance differences in the head-to-head may reflect these environmental deltas, not pure policy quality.
+
+| Property | OLSD v2 | walk-these-ways |
+| --- | --- | --- |
+| Simulator | MuJoCo 3.x | Isaac Gym (PhysX GPU) |
+| Physics backend | MuJoCo native contact solver | NVIDIA PhysX |
+| Go1 model file | Hand-authored MJCF (`go1_env.py`) | URDF from `legged_gym` |
+| Observation space | 35-dim (qpos + qvel) | 70-dim (+ observation history + commands) |
+| Action space | 12-dim position targets | 12-dim position offsets from default pose |
+| Control frequency | 50 Hz (0.002s × 10 frame skip) | 50 Hz |
+| Reward function | OLSD velocity-tracking (exp-form) | Gait-conditioned multi-objective |
+| Training framework | Stable-Baselines3 PPO (CPU) | rl_games PPO (GPU) |
+
 ## Where OLSD v2 Clearly Wins
 
 - Open, vendor-neutral schema instead of a single-vendor workflow
