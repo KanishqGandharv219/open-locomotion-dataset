@@ -46,7 +46,7 @@ For a conservative comparison against a Unitree-focused baseline, see `docs/unit
 
 These numbers come from the checked-in artifacts and `results/sim2real_report.json`.
 
-### Go1 Canonical Policies (Velocity-Tracking v1)
+### Go1 Canonical Policies (Velocity-Tracking v1):
 
 | Terrain | Status | Return Mean | Episode Length Mean | Forward Velocity | Success Rate |
 | --- | --- | ---: | ---: | ---: | ---: |
