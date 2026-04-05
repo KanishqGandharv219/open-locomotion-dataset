@@ -9,7 +9,7 @@ Open Locomotion Skills Dataset is a unified locomotion data and sim-to-real tool
 
 ## Verified Status
 
-As of March 30, 2026, the repository is verified at:
+As of March 30, 2026, the repository is verified at::
 
 - `71` passing tests via `python -m pytest tests -q`
 - Phase 1 complete: schema upgrades, external ingestors, alignment utilities
